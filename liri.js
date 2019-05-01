@@ -37,8 +37,7 @@ function liri() {
             break;
         default:
             console.log("Please enter a valid command.");
-    }
-    ;
+    };
 }
 
 function doWhatItSays() {
@@ -69,7 +68,7 @@ function movieThis() {
         console.log("Actors: " + response.data.Actors);
     })
     .catch(function (err) {
-        console.log(err);
+        console.log(" ");
     });;
 }
 
@@ -83,7 +82,7 @@ function spotifyThisSong() {
             console.log("Album: " + response.tracks.items[0].album.name);
         })
         .catch(function (err) {
-            console.log(err);
+            console.log("Spotify cannot find this song... ");
         });
 }
 
