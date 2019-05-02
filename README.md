@@ -38,5 +38,6 @@
    
 ### LIRI Bot Links:
 [LIRI BOT](https://docs.google.com/document/d/1Z1UOZBiQhXR0LBIcTYk3fGVI6KVtN_m7Fm0h40iuWSM/edit?usp=sharing)
+
 ![LIRI BOT](https://raw.githubusercontent.com/johnsickels/liri-node-app/master/images/user_interface.png)
 
