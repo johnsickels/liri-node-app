@@ -1,4 +1,5 @@
 require("dotenv").config();
+var inquirer = require("inquirer");
 
 var moment = require('moment');
 var keys = require("./keys.js");
@@ -9,7 +10,7 @@ var nodeArgs = process.argv;
 var command = process.argv[2];
 var entry = "";
 var fs = require('fs');
-var responseArr = [];
+var logResponse = [];
 var cleanResponse = "";
 
 for (var i = 3; i < nodeArgs.length; i++) {
@@ -31,9 +32,30 @@ function concertThis() {
                 "\nDate: " + moment(response.data[i].datetime, "YYYY-MM-DDTHH:mm:ss").format("MM/DD/YYYY");
 
             console.log(cleanResponse);
-            logResults(cleanResponse);
+            logResponse.push(cleanResponse);
+            
         };
+        promptLog();
     });
+}
+
+function promptLog() {
+    console.log("Got this far...");
+    
+    inquirer
+        .prompt({
+            name: "log",
+            type: "confirm",
+            message: "Would you like to log these results?"
+        })
+        .then(function (answer) {
+            if (answer.log) {
+                logResults(logResponse);
+            }
+            else {
+                return;
+            }
+        });
 }
 
 function spotifyThisSong() {
@@ -41,14 +63,15 @@ function spotifyThisSong() {
         .search({ type: 'track', query: entry })
         .then(function (response) {
             for (var i = 0; i < 5; i++) {
-            cleanResponse = 
-                "\nArtist(s): " + response.tracks.items[i].artists[0].name +
-                "\nTrack: " + response.tracks.items[i].name +
-                "\nPreview: " + response.tracks.items[i].preview_url +
-                "\nAlbum: " + response.tracks.items[i].album.name;
-            console.log(cleanResponse);
-            logResults(cleanResponse);
-        }
+                cleanResponse =
+                    "\nArtist(s): " + response.tracks.items[i].artists[0].name +
+                    "\nTrack: " + response.tracks.items[i].name +
+                    "\nPreview: " + response.tracks.items[i].preview_url +
+                    "\nAlbum: " + response.tracks.items[i].album.name;
+                console.log(cleanResponse);
+                logResponse.push(cleanResponse);
+            };
+            promptLog();
         })
         .catch(function () {
             console.log("Spotify cannot find this song... ");
@@ -61,7 +84,7 @@ function movieThis() {
     }
     ;
     axios.get("http://www.omdbapi.com/?t=" + entry + "&y=&plot=short&apikey=trilogy").then(function (response) {
-        cleanResponse = "\nEntry: " + entry +
+        cleanResponse = 
             "\nTitle: " + response.data.Title +
             "\nRelease Year: " + response.data.Year +
             "\nIMDB: " + response.data.imdbRating +
@@ -71,7 +94,8 @@ function movieThis() {
             "\nPlot: " + response.data.Plot +
             "\nActors: " + response.data.Actors;
         console.log(cleanResponse);
-        logResults(cleanResponse);
+        logResponse.push(cleanResponse);
+        promptLog();
     })
         .catch(function (err) {
             console.log(err);
@@ -92,13 +116,11 @@ function doWhatItSays() {
 
 function logResults(cleanResponse) {
     fs.appendFile("log.txt", "\n------------------------------\n" + cleanResponse, function (err) {
-        // If an error was experienced we will log it.
         if (err) {
             console.log(err);
-        }
-        // If no error is experienced, we'll log the phrase "Content Added" to our node console.
-        else {
-            console.log("Content Added!");
+        } else {
+            console.log("Results logged!");
+            
         }
     });
 }
@@ -118,7 +140,11 @@ function liri() {
             doWhatItSays();
             break;
         default:
-            console.log("Please enter a valid command.");
+            console.log("Please enter a valid command: " +
+                "\nnode liri.js concert-this tom jones" +
+                "\nnode liri.js spotify-this-song fluffhead" +
+                "\nmovie-this jaws" +
+                "\ndo-what-it-says");
     };
 }
 
