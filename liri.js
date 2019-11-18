@@ -24,8 +24,9 @@ for (var i = 3; i < nodeArgs.length; i++) {
 
 function concertThis() {
     axios.get("https://rest.bandsintown.com/artists/" + entry + "/events?app_id=codingbootcamp").then(function (response) {
-
-        for (var i = 0; i < 5; i++) {
+        var len = 5 < response.data.length ? 5 : response.data.length
+        
+        for (var i = 0; i < len; i++) {
             cleanResponse =
                 "\nVenue: " + response.data[i].venue.name +
                 "\nLocation: " + response.data[i].venue.city + ", " + response.data[i].venue.region + ", " + response.data[i].venue.country +
